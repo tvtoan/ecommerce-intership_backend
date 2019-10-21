@@ -3,46 +3,52 @@ const bcrypt = require("bcrypt");
 
 const Schema = mongoose.Schema;
 
-const userSchema = new Schema({
-  name: {
-    type: String,
-    required: true
+const userSchema = new Schema(
+  {
+    name: {
+      type: String,
+      required: true
+    },
+    email: {
+      type: String,
+      required: true
+    },
+    password: {
+      type: String,
+      required: true
+    }
+    // cart: {
+    //   items: [
+    //     {
+    //       productId: {
+    //         type: Schema.Types.ObjectId,
+    //         ref: "Product",
+    //         required: true
+    //       },
+    //       quantity: {
+    //         type: Number,
+    //         required: true
+    //       }
+    //     }
+    //   ]
+    // }
   },
-  email: {
-    type: String,
-    required: true
-  },
-  password: {
-    type: String,
-    required: true
-  }
-  // cart: {
-  //   items: [
-  //     {
-  //       productId: {
-  //         type: Schema.Types.ObjectId,
-  //         ref: "Product",
-  //         required: true
-  //       },
-  //       quantity: {
-  //         type: Number,
-  //         required: true
-  //       }
-  //     }
-  //   ]
-  // }
-});
+  { timestamps: true }
+);
 
 userSchema.pre(
   "save",
-  next => {
-    const user = this;
-    bcrypt.hash(user.password, 10, (err, hash) => {
-      user.password = hash;
+  function(next) {
+    console.log("This:", this);
+    if (!this.isModified("password")) {
+      return next();
+    }
+    bcrypt.hash(this.password, 10, (err, hashedPassword) => {
+      this.password = hashedPassword;
       next();
     });
   },
-  err => {
+  function(err) {
     next(err);
   }
 );
