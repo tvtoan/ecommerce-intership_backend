@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 const Schema = mongoose.Schema;
 
@@ -39,7 +40,6 @@ const userSchema = new Schema(
 userSchema.pre(
   "save",
   function(next) {
-    console.log("This:", this);
     if (!this.isModified("password")) {
       return next();
     }
@@ -52,6 +52,31 @@ userSchema.pre(
     next(err);
   }
 );
+
+userSchema.methods.generateAuthToken = function() {
+  let payload = {
+    sub: this.name,
+    uuid: this._id,
+    isAdmin: this.isAdmin
+  };
+  const token = jwt.sign(payload, process.env.JWT_SECRET, {
+    expiresIn: "1 week"
+  });
+  return token;
+};
+
+userSchema.methods.checkAuthToken = function(token) {
+  
+};
+
+userSchema.methods.comparePassword = function(candidatePassword, next) {
+  bcrypt.compare(candidatePassword, this.password, function(err, isMatch) {
+    if (err) {
+      return next(err);
+    }
+    next(null, isMatch);
+  });
+};
 
 // userSchema.methods.addToCart = function(product) {
 //   const cartProductIndex = this.cart.items.findIndex(cp => {
