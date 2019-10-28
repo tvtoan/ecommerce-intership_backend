@@ -29,6 +29,14 @@ app.use(bodyParser.json());
 app.use(authRoutes);
 app.use(shopRoutes);
 
+app.use(function (err, req, res, next) {
+  console.error(err.message);
+  res.status(500).json({
+    status: "failed",
+    message: err.message
+  });
+})
+
 mongoose
   .connect(process.env.MONGODB_URL, {
     useNewUrlParser: true
