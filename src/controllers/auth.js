@@ -14,9 +14,9 @@ exports.register = (req, res, next) => {
     .save()
     .then(result => {
       console.log("Result register:", result);
-      res.status(200).json({
-        status: "success",
-        message: "Register successlly !",
+      return res.status(200).json({
+        status: "REGISTER_SUCCESS",
+        message: "Register successlly!",
         data: user
       });
     })
@@ -26,7 +26,6 @@ exports.register = (req, res, next) => {
 };
 
 exports.login = (req, res, next) => {
-  console.log("LOGINED");
   User.findOne({ email: req.body.email })
     .then(user => {
       // check user
@@ -41,16 +40,17 @@ exports.login = (req, res, next) => {
           if (err) {
             throw err;
           }
-          console.log("isMatch:", isMatch);
           if (isMatch) {
+            console.log("LOGINED");
             let token = user.generateAuthToken();
             res.header("Authorization", "Bearer " + token);
             return res.status(200).json({
               status: "success",
-              message: "Login"
+              message: "Login",
+              token: token
             });
           } else {
-            return res.status(400).json({
+            return res.status(401).json({
               status: "failed",
               message: "Invaild password"
             });
@@ -65,10 +65,32 @@ exports.login = (req, res, next) => {
 
 exports.logout = (req, res, next) => {
   console.log("LOGOUT");
-  let token = req.headers["authorization"].replace("Bearer ", "");
-  console.log(token);
-  jwt.verify(token, process.env.JWT_SECRET, function(err, decoded) {
-    console.log("decoded:", decoded);
+  res.json({
+    status: "LOGOUT_SUCCESS",
+    message: "Logouted"
   });
-  res.send("logout");
 };
+
+exports.verifyToken = (req, res, next) => {
+  let authHeader = req.headers["authorization"];
+  if (!authHeader) {
+    return res.status(403).json({ 
+      status: "NOT_PROVIDED_TOKEN", 
+      message: "No token provided." 
+    });
+  }
+
+  const token = authHeader.replace("Bearer ", "");
+  // verify token by jsonwebtoken
+  jwt.verify(token, process.env.JWT_SECRET, function(err, decoded) {
+    if (err) {
+      return res.status(500).json({ 
+        status: "FAILED_AUTHENTICATE_TOKEN", 
+        message: 'Failed to authenticate token.' 
+      });
+    }
+    console.log("decoded:", decoded);
+    req.user = decoded.uuid;
+    next();
+  });
+}

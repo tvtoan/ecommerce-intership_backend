@@ -47,5 +47,3 @@ mongoose
   .catch(err => {
     console.log("Error App.js:", err);
   });
-
-// app.listen(8080);

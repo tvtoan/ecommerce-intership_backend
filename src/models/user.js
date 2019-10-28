@@ -16,8 +16,13 @@ const userSchema = new Schema(
     },
     password: {
       type: String,
-      required: true
-    }
+      required: true,
+    },
+    // isAdmin: {
+    //   type: Boolean,
+    //   required: true
+
+    // }
     // cart: {
     //   items: [
     //     {
@@ -55,7 +60,6 @@ userSchema.pre(
 
 userSchema.methods.generateAuthToken = function() {
   let payload = {
-    sub: this.name,
     uuid: this._id,
     isAdmin: this.isAdmin
   };
@@ -65,16 +69,13 @@ userSchema.methods.generateAuthToken = function() {
   return token;
 };
 
-userSchema.methods.checkAuthToken = function(token) {
-  
-};
-
-userSchema.methods.comparePassword = function(candidatePassword, next) {
+userSchema.methods.comparePassword = function(candidatePassword, callbackHandle) {
+  console.log("this.password:", this.password);
   bcrypt.compare(candidatePassword, this.password, function(err, isMatch) {
     if (err) {
-      return next(err);
+      return callbackHandle(err);
     }
-    next(null, isMatch);
+    callbackHandle(null, isMatch);
   });
 };
 
