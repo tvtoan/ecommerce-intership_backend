@@ -4,7 +4,8 @@ const path = require("path");
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
-const dotenv = require('dotenv');
+const dotenv = require("dotenv");
+const cors = require("cors");
 
 //
 const shopRoutes = require("./routes/shop");
@@ -14,7 +15,13 @@ const User = require("./models/user");
 dotenv.config();
 const app = express();
 
-
+// configure cors
+app.use(
+  cors({
+    origin: "*",
+    optionsSuccessStatus: 200
+  })
+);
 // Configure bodyparser to handle post requests
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
