@@ -6,11 +6,11 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const cors = require("cors");
-
-//
+// internal modules
 const shopRoutes = require("./routes/shop");
 const authRoutes = require("./routes/auth");
 const User = require("./models/user");
+const authController = require("./controllers/auth");
 
 dotenv.config();
 const app = express();
@@ -22,20 +22,28 @@ app.use(
     optionsSuccessStatus: 200
   })
 );
+// configure verify every time request
+const excludedPath = ["/login", "/register"];
+app.use(function(req, res, next) {
+  if (excludedPath.indexOf(req.url) > -1) return next();
+  authController.verifyToken(req, res, next);
+});
 // Configure bodyparser to handle post requests
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
+// routes
 app.use(authRoutes);
 app.use(shopRoutes);
 
-app.use(function (err, req, res, next) {
+// handle error
+app.use(function(err, req, res, next) {
   console.error(err.stack);
   res.status(500).json({
     status: "failed",
     message: err.message
   });
-})
+});
 
 mongoose
   .connect(process.env.MONGODB_URL, {
