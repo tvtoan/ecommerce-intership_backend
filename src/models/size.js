@@ -6,7 +6,8 @@ const sizeSchema = new Schema(
   {
     type: {
       type: String,
-      required: true
+      required: true,
+      unique: true
     },
     quantity: {
       type: Number,

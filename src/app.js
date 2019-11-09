@@ -30,7 +30,7 @@ app.use(authRoutes);
 app.use(shopRoutes);
 
 app.use(function (err, req, res, next) {
-  console.error(err.message);
+  console.error(err.stack);
   res.status(500).json({
     status: "failed",
     message: err.message

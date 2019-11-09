@@ -4,12 +4,13 @@ const ImageFileMulti = require("../models/images");
 
 exports.uploadSingleFile = (req, res, next) => {
   // let img = fs.readFileSync(req.file.buffer);
+  console.log("Image:", req.file);
   const img = req.file.buffer;
   var encode_image = img.toString("base64");
 
   // Define a JSONobject for the image attributes for saving to database
   let finalImg = new ImageFile({
-    data: new Buffer(encode_image, "base64"),
+    data: Buffer.from(encode_image, "base64"),
     contentType: req.file.mimetype
   });
   finalImg.save((err, result) => {
@@ -22,6 +23,7 @@ exports.uploadSingleFile = (req, res, next) => {
 
 exports.uploadMultiFile = (req, res, next) => {
   const files = req.files;
+  console.log("files:", files);
   if (!files) {
     res.status(400).json({
       status: "failed",
@@ -39,6 +41,7 @@ exports.uploadMultiFile = (req, res, next) => {
     };
     listImage.push(imgBase64);
   }
+  console.log("listImage:",listImage);
   let images = new ImageFileMulti({images: listImage});
   images.save((err, result) => {
     console.log("saved to database multiple");

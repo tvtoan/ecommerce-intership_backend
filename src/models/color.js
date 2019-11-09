@@ -6,8 +6,13 @@ const colorSchema = new Schema(
   {
     name: {
       type: String,
-      required: true
+      required: true,
+      unique: true
     },
+    code: {
+      type: String,
+      required: true,
+    }
   },
   { timestamps: true }
 );

@@ -6,23 +6,28 @@ const Schema = mongoose.Schema;
 
 const userSchema = new Schema(
   {
-    name: {
+    fullname: {
       type: String,
       required: true
     },
     email: {
       type: String,
+      unique: true,
       required: true
     },
     password: {
       type: String,
-      required: true,
+      minlength: 6,
+      required: true
     },
-    // isAdmin: {
-    //   type: Boolean,
-    //   required: true
-
-    // }
+    isActivated: { 
+      type: Boolean, 
+      default: false 
+    },
+    isSeller: {
+      type: Boolean,
+      default: false
+    }
     // cart: {
     //   items: [
     //     {
@@ -69,13 +74,15 @@ userSchema.methods.generateAuthToken = function() {
   return token;
 };
 
-userSchema.methods.comparePassword = function(candidatePassword, callbackHandle) {
-  console.log("this.password:", this.password);
+userSchema.methods.comparePassword = function(
+  candidatePassword,
+  cb
+) {
   bcrypt.compare(candidatePassword, this.password, function(err, isMatch) {
     if (err) {
-      return callbackHandle(err);
+      return cb(err);
     }
-    callbackHandle(null, isMatch);
+    cb(null, isMatch);
   });
 };
 
