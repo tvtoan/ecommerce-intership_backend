@@ -6,6 +6,7 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const cors = require("cors");
+const morgan = require("morgan");
 // internal modules
 const shopRoutes = require("./routes/shop");
 const authRoutes = require("./routes/auth");
@@ -23,7 +24,7 @@ app.use(
   })
 );
 // configure verify every time request
-const excludedPath = ["/login", "/register"];
+const excludedPath = ["/api/auth/login", "/api/auth/register", "/upload-single"];
 app.use(function(req, res, next) {
   if (excludedPath.indexOf(req.url) > -1) return next();
   authController.verifyToken(req, res, next);
@@ -31,9 +32,13 @@ app.use(function(req, res, next) {
 // Configure bodyparser to handle post requests
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+// configure morgan (development)
+if (process.env.NODE_ENV !== "development") {
+  app.use(morgan("dev"));
+}
 
 // routes
-app.use(authRoutes);
+app.use("/api/auth", authRoutes);
 app.use(shopRoutes);
 
 // handle error
@@ -47,7 +52,8 @@ app.use(function(err, req, res, next) {
 
 mongoose
   .connect(process.env.MONGODB_URL, {
-    useNewUrlParser: true
+    useNewUrlParser: true,
+    useUnifiedTopology: true
   })
   .then(() => {
     console.log("CONNECTED");

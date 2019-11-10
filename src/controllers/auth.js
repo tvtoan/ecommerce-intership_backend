@@ -1,31 +1,38 @@
 const User = require("../models/user");
 const jwt = require("jsonwebtoken");
+const _ = require("lodash/object");
 
 exports.register = (req, res, next) => {
-  console.log("REGISTERED");
   const user = new User({
-    name: req.body.name,
+    fullname: req.body.fullname,
     email: req.body.email,
-    password: req.body.password
+    password: req.body.password,
+    avatar: req.body.avatar
   });
   // crypt user's password
   user.generateAuthToken();
   user
     .save()
     .then(result => {
-      console.log("Result register:", result);
       return res.status(200).json({
         status: "REGISTER_SUCCESS",
         message: "Register successlly!",
-        data: user
+        isSeller: user.isSeller
       });
     })
     .catch(err => {
       console.error("Error controller-register:", err);
+      res.status(500).json({
+        details: {
+          field: Object.keys(err.keyValue)[0],
+          message: err.errmsg
+        }
+      });
     });
 };
 
 exports.login = (req, res, next) => {
+  console.log("req.body:", req.body);
   User.findOne({ email: req.body.email })
     .then(user => {
       // check user
@@ -41,13 +48,14 @@ exports.login = (req, res, next) => {
             throw err;
           }
           if (isMatch) {
-            console.log("LOGINED");
             let token = user.generateAuthToken();
             res.header("Authorization", "Bearer " + token);
+            let userRes = _.omit(user.toObject(), "password");
             return res.status(200).json({
               status: "success",
               message: "Login",
-              token: token
+              accessToken: token,
+              user: userRes
             });
           } else {
             return res.status(401).json({
@@ -74,9 +82,9 @@ exports.logout = (req, res, next) => {
 exports.verifyToken = (req, res, next) => {
   let authHeader = req.headers["authorization"];
   if (!authHeader) {
-    return res.status(403).json({ 
-      status: "NOT_PROVIDED_TOKEN", 
-      message: "No token provided." 
+    return res.status(403).json({
+      status: "NOT_PROVIDED_TOKEN",
+      message: "No token provided."
     });
   }
 
@@ -84,13 +92,13 @@ exports.verifyToken = (req, res, next) => {
   // verify token by jsonwebtoken
   jwt.verify(token, process.env.JWT_SECRET, function(err, decoded) {
     if (err) {
-      return res.status(500).json({ 
-        status: "FAILED_AUTHENTICATE_TOKEN", 
-        message: 'Failed to authenticate token.' 
+      return res.status(500).json({
+        status: "FAILED_AUTHENTICATE_TOKEN",
+        message: "Failed to authenticate token."
       });
     }
     console.log("decoded:", decoded);
     req.user = decoded.uuid;
     next();
   });
-}
+};

@@ -20,13 +20,20 @@ const userSchema = new Schema(
       minlength: 6,
       required: true
     },
-    isActivated: { 
-      type: Boolean, 
-      default: false 
+    isActivated: {
+      type: Boolean,
+      default: false
     },
     isSeller: {
       type: Boolean,
       default: false
+    },
+    avatar: {
+      type: {
+        data: Buffer,
+        contentType: String
+      },
+      default: {}
     }
     // cart: {
     //   items: [
@@ -74,10 +81,7 @@ userSchema.methods.generateAuthToken = function() {
   return token;
 };
 
-userSchema.methods.comparePassword = function(
-  candidatePassword,
-  cb
-) {
+userSchema.methods.comparePassword = function(candidatePassword, cb) {
   bcrypt.compare(candidatePassword, this.password, function(err, isMatch) {
     if (err) {
       return cb(err);
