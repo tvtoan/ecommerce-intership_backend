@@ -7,11 +7,14 @@ const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const cors = require("cors");
 const morgan = require("morgan");
-// internal modules
+// models
+const User = require("./models/user");
+// controllers
+const authController = require("./controllers/auth");
+// routes
 const shopRoutes = require("./routes/shop");
 const authRoutes = require("./routes/auth");
-const User = require("./models/user");
-const authController = require("./controllers/auth");
+const categoryRoutes = require("./routes/category");
 
 dotenv.config();
 const app = express();
@@ -39,6 +42,7 @@ if (process.env.NODE_ENV !== "development") {
 
 // routes
 app.use("/api/auth", authRoutes);
+app.use("/api/categories", categoryRoutes);
 app.use(shopRoutes);
 
 // handle error

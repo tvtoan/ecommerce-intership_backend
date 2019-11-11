@@ -70,13 +70,13 @@ userSchema.pre(
   }
 );
 
-userSchema.methods.generateAuthToken = function() {
+userSchema.methods.generateAuthToken = function(isRemember) {
   let payload = {
     uuid: this._id,
-    isAdmin: this.isAdmin
+    isSeller: this.isSeller
   };
   const token = jwt.sign(payload, process.env.JWT_SECRET, {
-    expiresIn: "1 week"
+    expiresIn: isRemember ? "1 week" : "12h"
   });
   return token;
 };

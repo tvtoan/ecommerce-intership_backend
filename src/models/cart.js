@@ -10,10 +10,10 @@ const cartSchema = new Schema(
           product: {
             type: Schema.Types.ObjectId,
             ref: "Product",
-            require: true
+            required: true
           },
-          color: { type: Schema.Types.ObjectId, ref: "Color", require: true },
-          size: { type: Schema.Types.ObjectId, ref: "Size", require: true },
+          color: { type: Schema.Types.ObjectId, ref: "Color", required: true },
+          size: { type: Schema.Types.ObjectId, ref: "Size", required: true },
           quantity: { type: Number, default: 1 }
         }
       ],

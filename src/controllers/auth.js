@@ -48,7 +48,7 @@ exports.login = (req, res, next) => {
             throw err;
           }
           if (isMatch) {
-            let token = user.generateAuthToken();
+            let token = user.generateAuthToken(req.body.isRemember);
             res.header("Authorization", "Bearer " + token);
             let userRes = _.omit(user.toObject(), "password");
             return res.status(200).json({
@@ -72,7 +72,6 @@ exports.login = (req, res, next) => {
 };
 
 exports.logout = (req, res, next) => {
-  console.log("LOGOUT");
   res.json({
     status: "LOGOUT_SUCCESS",
     message: "Logouted"

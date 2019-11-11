@@ -1,8 +1,7 @@
 // 3rd packages
 const mongoose = require("mongoose");
 // internal
-const convertSlug = require("../helpers/methods");
-
+const {convertSlug} = require("../helpers/methods");
 
 const Schema = mongoose.Schema;
 
@@ -18,7 +17,6 @@ const categorySchema = new Schema(
     },
     slug: {
       type: String,
-      required: true
     },
     ancestors: [
       {
@@ -31,12 +29,13 @@ const categorySchema = new Schema(
 );
 
 categorySchema.pre(
-  "save",
+  ["save", "insertMany"],
   function(next) {
-    if (!this.isModified("slug")) {
-      return next();
-    }
-    if (this.slug) {
+    // if (!this.isModified("slug")) {
+    //   return next();
+    // }
+    if (!this.slug) {
+      console.log("conver slug:");
       this.slug = convertSlug(this.name);
     }
     next();
@@ -46,8 +45,8 @@ categorySchema.pre(
   }
 );
 
-categorySchema.methods.buildAncestors = function(id, parentId) {
-  return this.model('Animal').find({ type: this.type }, cb);
-};
+// categorySchema.methods.buildAncestors = function(id, parentId) {
+//   return this.model('Animal').find({ type: this.type }, cb);
+// };
 
 module.exports = mongoose.model("Category", categorySchema);

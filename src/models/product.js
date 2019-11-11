@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const {convertSlug} = require("../helpers/methods");
 
 const Schema = mongoose.Schema;
 
@@ -19,9 +20,20 @@ const productSchema = new Schema(
     categoies: [{ type: Schema.Types.ObjectId, ref: "Category" }],
     brand: { type: Schema.Types.ObjectId, ref: "Brand", required: true },
     price: { type: Number, required: true },
-    size: [{ type: Schema.Types.ObjectId, ref: "Size" }],
+    sizes: [
+      {
+        type: {
+          size: Schema.Types.ObjectId,
+          quantity: {
+            type: Number,
+            require: true
+          }
+        },
+        ref: "Size"
+      }
+    ],
     color: [{ type: Schema.Types.ObjectId, ref: "Color" }],
-    quantity: { type: Number, required: true },
+    // quantity: { type: Number, required: true },
     description: String,
     comments: [
       {
