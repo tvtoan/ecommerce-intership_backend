@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const {convertSlug} = require("../helpers/methods");
+const { convertSlug } = require("../helpers/methods");
 
 const Schema = mongoose.Schema;
 
@@ -14,6 +14,10 @@ const productSchema = new Schema(
       ],
       validate: [arrayLimit, "{PATH} exceeds the limit of 8"],
       required: true
+    },
+    coverImage: {
+      data: Buffer,
+      contentType: String
     },
     name: { type: String, required: true },
     slug: { type: String },
@@ -63,9 +67,11 @@ productSchema.pre(
     if (!this.isModified("slug")) {
       return next();
     }
-    if (this.slug) {
+    if (!this.slug) {
       this.slug = convertSlug(this.name);
     }
+    // get cover image from first photos
+    this.coverImage = this.photos[0];
     next();
   },
   function(err) {

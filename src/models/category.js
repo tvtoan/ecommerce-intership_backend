@@ -29,11 +29,11 @@ const categorySchema = new Schema(
 );
 
 categorySchema.pre(
-  ["save", "insertMany"],
+  "save",
   function(next) {
-    // if (!this.isModified("slug")) {
-    //   return next();
-    // }
+    if (!this.isModified("slug")) {
+      return next();
+    }
     if (!this.slug) {
       console.log("conver slug:", convertSlug(this.name));
       this.slug = convertSlug(this.name);
