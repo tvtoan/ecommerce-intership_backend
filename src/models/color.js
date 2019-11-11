@@ -17,4 +17,4 @@ const colorSchema = new Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("Size", colorSchema);
+module.exports = mongoose.model("Color", colorSchema);

@@ -35,7 +35,7 @@ categorySchema.pre(
     //   return next();
     // }
     if (!this.slug) {
-      console.log("conver slug:");
+      console.log("conver slug:", convertSlug(this.name));
       this.slug = convertSlug(this.name);
     }
     next();

@@ -15,6 +15,9 @@ const authController = require("./controllers/auth");
 const shopRoutes = require("./routes/shop");
 const authRoutes = require("./routes/auth");
 const categoryRoutes = require("./routes/category");
+const brandRoutes = require("./routes/brand");
+const colorRoutes = require("./routes/color");
+const sizeRoutes = require("./routes/size");
 
 dotenv.config();
 const app = express();
@@ -43,12 +46,15 @@ if (process.env.NODE_ENV !== "development") {
 // routes
 app.use("/api/auth", authRoutes);
 app.use("/api/categories", categoryRoutes);
+app.use("/api/brands", brandRoutes);
+app.use("/api/colors", colorRoutes);
+app.use("/api/sizes", sizeRoutes);
 app.use(shopRoutes);
 
 // handle error
 app.use(function(err, req, res, next) {
   console.error(err.stack);
-  res.status(500).json({
+  res.status(err.statusCode).json({
     status: "failed",
     message: err.message
   });

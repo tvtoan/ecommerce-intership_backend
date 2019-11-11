@@ -6,11 +6,10 @@ exports.addCategory = async (req, res) => {
     ancestors.push(req.body.parent);
     await Category.updateOne({ _id: _id }, { $set: { ancestors: ancestors } });
   };
-  const category = await Category.insertMany(req.body);
+  const category = new Category(req.body);
+  const result = await category.save();
   if (req.body.parent) {
-    category.map(items => {
-      build_ancestors(items._id);
-    });
+    build_ancestors(result._id);
   }
   return res.status(200).json({
     status: "ADDED_CATEGORY_SUCCESS",
@@ -28,11 +27,15 @@ exports.updateCategory = async (req, res) => {
     });
   }
   await Category.updateOne(category, req.body);
-  for (const cat of await Category.find({
+  // $or: Joins query clauses with a logical OR returns all documents that match the conditions of either clause.
+  // find all categories by id
+  let cats = await Category.find({
     $or: [{ ancestors: id }, { _id: id }]
-  })) {
+  });
+  for (const cat of cats) {
     const { ancestors } = await Category.findById(cat["parent"]);
     ancestors.push(cat["parent"]);
+    // $set: Sets the value of a field in a document.
     await Category.updateOne(
       { _id: cat["id"] },
       { $set: { ancestors: ancestors } }
@@ -44,6 +47,10 @@ exports.updateCategory = async (req, res) => {
   });
 };
 
+/**
+ * Errors
+ * 1. CastError: Cast to ObjectId failed for value "5dc97461a398f528fe819b2" at path "_id" for model "Category" (truthy id: "5dc97461a398f528fe819b23")
+ */
 exports.deleteCategory = async (req, res) => {
   const { id } = req.params;
   const category = await Category.findById(id);
@@ -61,15 +68,18 @@ exports.deleteCategory = async (req, res) => {
 };
 
 exports.getAllCategory = async (req, res) => {
-  const categorys = await Category.find().populate({
+  const categories = await Category.find().populate({
     path: "parent",
     select: "name"
   });
-  if (!categorys) {
-    return res.status(400).json({ message: "category not found" });
+  if (!categories) {
+    return res.status(400).json({
+      status: "NOT_FOUND_CATEGORY",
+      message: "Category not found!"
+    });
   }
-  const category = categorys.map(item => item);
-  return res.status(200).json({ category });
+  const mapCategories = categories.map(item => item);
+  return res.status(200).json({ categories: mapCategories });
 };
 
 exports.getCategory = async (req, res) => {
@@ -82,8 +92,6 @@ exports.getCategory = async (req, res) => {
     });
   }
   return res.status(200).json({
-    status: "GET_CATEGORY_SUCCESS",
-    message: "Getted category",
-    data: category
+    category
   });
 };
