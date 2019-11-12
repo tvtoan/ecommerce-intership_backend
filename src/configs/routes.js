@@ -1,5 +1,5 @@
 // handle routes
-const shopRoutes = require("../routes/shop");
+const imageRoutes = require("../routes/image");
 const authRoutes = require("../routes/auth");
 const categoryRoutes = require("../routes/category");
 const brandRoutes = require("../routes/brand");
@@ -17,7 +17,7 @@ module.exports = app => {
   app.use("/api/sizes", sizeRoutes);
   app.use("/api/carts", cartRoutes);
   app.use("/api/products", productRoutes);
-  app.use("/api", shopRoutes);
+  app.use("/api/images", imageRoutes);
 
   // handle error
   app.use(function(err, req, res, next) {

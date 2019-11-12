@@ -1,13 +1,7 @@
 const Product = require("../models/product");
-const uploadHelpers = require("../helpers/uploads");
 
 exports.create = async (req, res, next) => {
-  const files = req.files;
-  const handledImages = uploadHelpers.uploadImages(files, res, next);
-  const product = new Product({
-    ...req.body,
-    photos: handledImages
-  });
+  const product = new Product(req.body);
   try {
     await product.save();
     return res.status(200).json({
@@ -30,13 +24,7 @@ exports.updateById = async (req, res, next) => {
         message: "Product not found!"
       });
     }
-    let productUpdate = {...req.body};
-    if (req.body.photos) {
-      const files = req.files;
-      const handledImages = uploadHelpers.uploadImages(files, res, next);
-      productUpdate = {...req.body, handledImages};
-    }
-    await Product.updateOne(product, productUpdate);
+    await Product.updateOne(product, req.body);
   } catch (error) {
     error.statusCode = 500;
     return next(error);

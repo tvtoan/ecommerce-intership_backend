@@ -5,20 +5,8 @@ const Schema = mongoose.Schema;
 
 const productSchema = new Schema(
   {
-    photos: {
-      type: [
-        {
-          data: Buffer,
-          contentType: String
-        }
-      ],
-      validate: [arrayLimit, "{PATH} exceeds the limit of 8"],
-      required: true
-    },
-    coverImage: {
-      data: Buffer,
-      contentType: String
-    },
+    photos: [{ type: Schema.Types.ObjectId, ref: "Image", required: true }],
+    coverImage: { type: Schema.Types.ObjectId, ref: "Image" },
     name: { type: String, required: true },
     slug: { type: String },
     category: [{ type: Schema.Types.ObjectId, ref: "Category" }],
@@ -56,14 +44,10 @@ const productSchema = new Schema(
   { timestamps: true }
 );
 
-function arrayLimit(val) {
-  return val.length <= 8;
-}
-
 productSchema.pre(
   "save",
   function(next) {
-    if (!this.isModified("slug")) {
+    if (this.isModified("slug")) {
       return next();
     }
     if (!this.slug) {

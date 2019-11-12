@@ -13,7 +13,8 @@ exports.addCategory = async (req, res) => {
   }
   return res.status(200).json({
     status: "ADDED_CATEGORY_SUCCESS",
-    message: "Added category successlly!"
+    message: "Added category successlly!",
+    category: result
   });
 };
 

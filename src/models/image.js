@@ -4,14 +4,10 @@ const Schema = mongoose.Schema;
 
 const imageSchema = new Schema(
   {
-    image: {
-      type: {
-        data: Buffer,
-        contentType: String
-      }
-    }
+    data: Buffer,
+    contentType: String
   },
   { timestamps: true }
 );
 
-module.exports = mongoose.model("ImageFile", imageSchema);
+module.exports = mongoose.model("Image", imageSchema);
