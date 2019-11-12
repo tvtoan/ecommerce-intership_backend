@@ -21,25 +21,24 @@ const productSchema = new Schema(
     },
     name: { type: String, required: true },
     slug: { type: String },
-    categoies: [{ type: Schema.Types.ObjectId, ref: "Category" }],
+    category: [{ type: Schema.Types.ObjectId, ref: "Category" }],
     brand: { type: Schema.Types.ObjectId, ref: "Brand", required: true },
     price: { type: Number, required: true },
-    sizes: [
+    variant: [
       {
-        type: {
-          size: Schema.Types.ObjectId,
-          quantity: {
-            type: Number,
-            require: true
-          }
+        size: {
+          type: Schema.Types.ObjectId,
+          ref: "Size"
         },
-        ref: "Size"
+        quantity: {
+          type: Number,
+          require: true
+        }
       }
     ],
     color: [{ type: Schema.Types.ObjectId, ref: "Color" }],
-    // quantity: { type: Number, required: true },
     description: String,
-    comments: [
+    comment: [
       {
         user: { type: Schema.Types.ObjectId, ref: "User" },
         content: { type: String },
@@ -48,7 +47,7 @@ const productSchema = new Schema(
         updatedAt: Date
       }
     ],
-    userId: {
+    user: {
       type: Schema.Types.ObjectId,
       ref: "User",
       required: true
@@ -71,7 +70,9 @@ productSchema.pre(
       this.slug = convertSlug(this.name);
     }
     // get cover image from first photos
-    this.coverImage = this.photos[0];
+    if (!this.coverImage) {
+      this.coverImage = this.photos[0];
+    }
     next();
   },
   function(err) {

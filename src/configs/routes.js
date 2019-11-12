@@ -6,6 +6,7 @@ const brandRoutes = require("../routes/brand");
 const colorRoutes = require("../routes/color");
 const sizeRoutes = require("../routes/size");
 const cartRoutes = require("../routes/cart");
+const productRoutes = require("../routes/product");
 
 // all routes
 module.exports = app => {
@@ -15,7 +16,8 @@ module.exports = app => {
   app.use("/api/colors", colorRoutes);
   app.use("/api/sizes", sizeRoutes);
   app.use("/api/carts", cartRoutes);
-  app.use(shopRoutes);
+  app.use("/api/products", productRoutes);
+  app.use("/api", shopRoutes);
 
   // handle error
   app.use(function(err, req, res, next) {

@@ -4,10 +4,9 @@ const Schema = mongoose.Schema;
 
 const sizeSchema = new Schema(
   {
-    type: {
+    name: {
       type: String,
-      required: true,
-      unique: true
+      required: true
     }
   },
   { timestamps: true }
