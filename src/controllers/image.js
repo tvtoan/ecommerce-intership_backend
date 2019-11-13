@@ -2,6 +2,16 @@ const _ = require("lodash");
 const Image = require("../models/image");
 const uploadHelpers = require("../helpers/uploads");
 
+exports.upload = (req, res, next) => {
+  const files = req.files;
+  if (!files) {
+    const error = new Error("Please choose files");
+    error.httpStatusCode = 400;
+    return next(error);
+  }
+  res.send(files);
+};
+
 exports.create = (req, res, next) => {
   const files = req.files;
   const images = uploadHelpers.uploadImages(files, res, next);

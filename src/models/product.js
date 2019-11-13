@@ -7,8 +7,8 @@ const productSchema = new Schema(
   {
     photos: [{ type: Schema.Types.ObjectId, ref: "Image", required: true }],
     coverImage: { type: Schema.Types.ObjectId, ref: "Image" },
-    name: { type: String, required: true },
-    slug: { type: String },
+    name: { type: String, required: true, unique: true },
+    slug: { type: String, unique: true },
     category: [{ type: Schema.Types.ObjectId, ref: "Category" }],
     brand: { type: Schema.Types.ObjectId, ref: "Brand", required: true },
     price: { type: Number, required: true },
@@ -43,6 +43,8 @@ const productSchema = new Schema(
   },
   { timestamps: true }
 );
+
+productSchema.index({ slug: 1 }, { unique: true });
 
 productSchema.pre(
   "save",

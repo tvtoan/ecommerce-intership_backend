@@ -12,7 +12,7 @@ dotenv.config();
 const app = express();
 
 // middleware
-middleware(app);
+middleware(express, app);
 // all routes
 routes(app);
 
