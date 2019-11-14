@@ -8,7 +8,7 @@ const orderSchema = new Schema(
       product: { type: Schema.Types.ObjectId, ref: "Product" },
       color: { type: Schema.Types.ObjectId, ref: "Color" },
       size: { type: Schema.Types.ObjectId, ref: "Size" },
-      quatity: Number
+      quantity: Number
     }],
     status: {
       type: String,
