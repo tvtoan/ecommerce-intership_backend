@@ -4,23 +4,20 @@ const Schema = mongoose.Schema;
 
 const orderSchema = new Schema(
   {
-    products: {
-      type: [
-        {
-          type: Schema.Types.ObjectId,
-          ref: "Product"
-        }
-      ],
-      required: true
-    },
+    products: [{
+      product: { type: Schema.Types.ObjectId, ref: "Product" },
+      color: { type: Schema.Types.ObjectId, ref: "Color" },
+      size: { type: Schema.Types.ObjectId, ref: "Size" },
+      quatity: Number
+    }],
     status: {
       type: String,
       enum: ["pending", "completed", "canceled"],
-      required: true
+      default: "pending"
     },
-    discount: {
-      type: Number
-    },
+    // discount: {
+    //   type: Number
+    // },
     transportFee: {
       type: Number,
       default: 0

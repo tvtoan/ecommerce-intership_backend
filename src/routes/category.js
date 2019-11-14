@@ -1,5 +1,6 @@
 const express = require("express");
 
+const authController = require('../controllers/auth');
 const categoryController = require("../controllers/category");
 
 const router = express.Router();
@@ -7,12 +8,12 @@ const router = express.Router();
 router
   .route("/")
   .get(categoryController.getAllCategory)
-  .post(categoryController.addCategory);
+  .post(authController.verifyToken, categoryController.addCategory);
 
 router
   .route("/:id")
-  .patch(categoryController.updateCategory)
-  .delete(categoryController.deleteCategory)
+  .patch(authController.verifyToken, categoryController.updateCategory)
+  .delete(authController.verifyToken, categoryController.deleteCategory)
   .get(categoryController.getCategory);
 
 module.exports = router;

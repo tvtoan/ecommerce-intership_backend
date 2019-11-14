@@ -7,6 +7,7 @@ const colorRoutes = require("../routes/color");
 const sizeRoutes = require("../routes/size");
 const cartRoutes = require("../routes/cart");
 const productRoutes = require("../routes/product");
+const orderRoutes = require("../routes/order");
 
 // all routes
 module.exports = app => {
@@ -18,6 +19,7 @@ module.exports = app => {
   app.use("/api/carts", cartRoutes);
   app.use("/api/products", productRoutes);
   app.use("/api/images", imageRoutes);
+  app.use("/api/orders", orderRoutes);
 
   // handle error
   app.use(function(err, req, res, next) {

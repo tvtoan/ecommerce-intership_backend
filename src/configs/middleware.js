@@ -19,15 +19,15 @@ module.exports = (express, app) => {
   app.use("/uploads", express.static('./uploads'));
 
   // configure verify every time request
-  const excludedPath = [
-    "/api/auth/login",
-    "/api/auth/register",
-    "/upload-single",
-  ];
-  app.use(function(req, res, next) {
-    if (excludedPath.indexOf(req.url) > -1) return next();
-    authController.verifyToken(req, res, next);
-  });
+  // const excludedPath = [
+  //   "/api/auth/login",
+  //   "/api/auth/register",
+  //   "/upload-single",
+  // ];
+  // app.use(function(req, res, next) {
+  //   if (excludedPath.indexOf(req.url) > -1) return next();
+  //   authController.verifyToken(req, res, next);
+  // });
 
   // Configure bodyparser to handle post requests
   app.use(bodyParser.urlencoded({ extended: false }));

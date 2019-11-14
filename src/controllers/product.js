@@ -97,10 +97,7 @@ exports.getBySlug = async (req, res, next) => {
     const product = await Product.findOne({ slug: slug })
       .populate("photos")
       .populate("brand")
-      .populate({
-        path: "variant",
-        select: "sizee"
-      })
+      .populate("variant.size")
       .populate("color")
       .exec();
     if (!product) {
